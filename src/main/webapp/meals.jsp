@@ -16,8 +16,8 @@
             <th>Calories</th>
         </tr>
         <c:forEach items="${mealToList}" var="mealTo">
-            <tr>
-            <th><c:out value="${mealTo.getDateTime()}"/></th>
+            <tr style ="${mealTo.isExcess() ? 'color: red' : 'color: green'}" >
+            <th><c:out value="${mealTo.getDateTime().format(mealDateTimeFormatter)}"/></th>
             <th><c:out value="${mealTo.getDescription()}"/></th>
             <th><c:out value="${mealTo.getCalories()}"/></th>
             </tr>
