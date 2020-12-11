@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="ru">
 <head>
@@ -23,5 +23,6 @@
                       value="<c:out value="${meal.getCalories()}"/>" /> <br />
     <input type="submit" name="calories" value="Save" />
 </form>
+<button onclick="window.location.href='meals?action=listMeal'">Cancel</button>
 </body>
 </html>

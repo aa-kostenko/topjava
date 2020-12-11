@@ -6,6 +6,19 @@
 
     <display-name>Topjava</display-name>
 
+    <filter>
+        <filter-name>FormEncodingSetterFilter</filter-name>
+        <filter-class>ru.javawebinar.topjava.web.FormEncodingSetterFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>FormEncodingSetterFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>userServlet</servlet-name>
         <servlet-class>ru.javawebinar.topjava.web.UserServlet</servlet-class>

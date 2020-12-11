@@ -38,7 +38,9 @@ public class MealTo {
         return excess;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     @Override
     public String toString() {

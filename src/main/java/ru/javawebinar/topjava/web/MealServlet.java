@@ -34,28 +34,30 @@ public class MealServlet extends HttpServlet {
     private static final DateTimeFormatter mealDateTimeFormatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    private static final DateTimeFormatter htmlDateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     private static final Logger log = getLogger(UserServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
-        String forward="";
+        String forward = "";
         String action = request.getParameter("action");
-        //это нужно практически в каждом случае кроме вставки
-        request.setAttribute("mealDateTimeFormatter", mealDateTimeFormatter);
 
         //тут пока просто удаляем
-        if (action.equalsIgnoreCase("delete")){
+        if (action.equalsIgnoreCase("delete")) {
             Long mealId = Long.parseLong(request.getParameter("mealId"));
             mealRepository.deleteById(mealId);
         }
 
         //а сюда идем или прямым путем или после удаления рациона
-        if ( action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("listMeal")){
+        if (action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("listMeal")) {
             forward = LIST_MEAL;
             List<Meal> mealList = new ArrayList<Meal>(mealRepository.findAll());
-            List<MealTo> mealToList = MealsUtil.filteredByStreams(mealList,LocalTime.MIN, LocalTime.MAX, 2000);
+            List<MealTo> mealToList = MealsUtil.filteredByStreams(mealList, LocalTime.MIN, LocalTime.MAX, 2000);
             request.setAttribute("mealToList", mealToList);
+            request.setAttribute("mealDateTimeFormatter", mealDateTimeFormatter);
         }
         //хотим редактировать рацион
         else if (action.equalsIgnoreCase("edit")) {
@@ -79,7 +81,7 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LocalDateTime dateTime = null;
         try {
-            dateTime = LocalDateTime.parse(req.getParameter("dateTime"), mealDateTimeFormatter);
+            dateTime = LocalDateTime.parse(req.getParameter("dateTime"), htmlDateTimeFormatter);
         } catch (DateTimeParseException e) {
             log.error(e.getMessage());
             e.printStackTrace();
@@ -89,7 +91,7 @@ public class MealServlet extends HttpServlet {
 
         int calories = 0;
         try {
-            calories = Integer.parseInt(req.getParameter("dateTime"));
+            calories = Integer.parseInt(req.getParameter("calories"));
         } catch (NumberFormatException e) {
             log.error(e.getMessage());
             e.printStackTrace();
@@ -97,20 +99,19 @@ public class MealServlet extends HttpServlet {
 
         String idStr = req.getParameter("id");
         Long id = null;
-        if(idStr == null || idStr.isEmpty()){
-            mealRepository.save(new Meal(dateTime,description,calories));
-        }
-        else{
+        if (idStr == null || idStr.isEmpty()) {
+            mealRepository.save(new Meal(dateTime, description, calories));
+        } else {
             try {
                 id = Long.parseLong(idStr);
             } catch (NumberFormatException e) {
                 log.error(e.getMessage());
                 e.printStackTrace();
             }
-            mealRepository.save(new Meal(id, dateTime,description,calories));
+            mealRepository.save(new Meal(id, dateTime, description, calories));
         }
         List<Meal> mealList = new ArrayList<Meal>(mealRepository.findAll());
-        List<MealTo> mealToList = MealsUtil.filteredByStreams(mealList,LocalTime.MIN, LocalTime.MAX, 2000);
+        List<MealTo> mealToList = MealsUtil.filteredByStreams(mealList, LocalTime.MIN, LocalTime.MAX, 2000);
         req.setAttribute("mealToList", mealToList);
         req.setAttribute("mealDateTimeFormatter", mealDateTimeFormatter);
         RequestDispatcher view = req.getRequestDispatcher(LIST_MEAL);

@@ -34,7 +34,7 @@ public class MealConcurrentMapCrudRepository implements MealCrudRepository {
 
     @Override
     public void deleteAll(Iterable<? extends Meal> entities) {
-        for(Meal meal: entities){
+        for (Meal meal : entities) {
             delete(meal);
         }
     }
@@ -57,9 +57,9 @@ public class MealConcurrentMapCrudRepository implements MealCrudRepository {
     @Override
     public List<Meal> findAllById(Iterable<Long> ids) {
         List<Meal> meals = new ArrayList<>();
-        for(Long id: ids){
+        for (Long id : ids) {
             Meal meal = map.get(id);
-            if (meal != null){
+            if (meal != null) {
                 meals.add(meal);
             }
         }
@@ -74,12 +74,11 @@ public class MealConcurrentMapCrudRepository implements MealCrudRepository {
     @Override
     public <S extends Meal> S save(S meal) {
         Long id = getKey(meal);
-        if (id == null){
+        if (id == null) {
             id = generateId();
             meal.setId(id);
             map.put(id, meal);
-        }
-        else{
+        } else {
             map.replace(id, meal);
         }
         return meal;
@@ -87,13 +86,13 @@ public class MealConcurrentMapCrudRepository implements MealCrudRepository {
 
     @Override
     public <S extends Meal> Iterable<S> saveAll(Iterable<S> entities) {
-        for(S entity: entities){
+        for (S entity : entities) {
             save(entity);
         }
         return entities;
     }
 
-    private Long getKey(Meal value){
+    private Long getKey(Meal value) {
         for (Map.Entry<Long, Meal> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {
                 return entry.getKey();
@@ -102,7 +101,7 @@ public class MealConcurrentMapCrudRepository implements MealCrudRepository {
         return null;
     }
 
-    private Long generateId(){
+    private Long generateId() {
         return longGenerator.incrementAndGet();
     }
 }
