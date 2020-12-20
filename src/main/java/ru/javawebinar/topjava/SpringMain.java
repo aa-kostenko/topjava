@@ -8,6 +8,8 @@ import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,9 +21,44 @@ public class SpringMain {
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 
+            System.out.println("Try get meals by dateTime filter (not null)");
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-            List<MealTo> mealToList =  mealRestController.getAll();
-            for(MealTo mealTo: mealToList){
+            List<MealTo> mealToList = mealRestController.getAllByDateAndTime(
+                    LocalDate.of(2020, 1, 31),
+                    LocalDate.of(2020, 1, 31),
+                    LocalTime.of(10, 0, 0),
+                    LocalTime.of(14, 0, 0));
+            for (MealTo mealTo : mealToList) {
+                System.out.println(mealTo);
+            }
+
+            System.out.println("Try get meals by dateTime filter (null dates)");
+            mealToList = mealRestController.getAllByDateAndTime(
+                    null,
+                    null,
+                    LocalTime.of(10, 0, 0),
+                    LocalTime.of(14, 0, 0));
+            for (MealTo mealTo : mealToList) {
+                System.out.println(mealTo);
+            }
+
+            System.out.println("Try get meals by dateTime filter (null times)");
+            mealToList = mealRestController.getAllByDateAndTime(
+                    LocalDate.of(2020, 1, 31),
+                    LocalDate.of(2020, 1, 31),
+                    null,
+                    null);
+            for (MealTo mealTo : mealToList) {
+                System.out.println(mealTo);
+            }
+
+            System.out.println("Try get meals by dateTime filter (null dates/times)");
+            mealToList = mealRestController.getAllByDateAndTime(
+                    null,
+                    null,
+                    null,
+                    null);
+            for (MealTo mealTo : mealToList) {
                 System.out.println(mealTo);
             }
         }
