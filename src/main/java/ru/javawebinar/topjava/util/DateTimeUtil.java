@@ -16,6 +16,10 @@ public class DateTimeUtil {
         return ld.compareTo(startDate) >= 0 && ld.compareTo(endDate) < 0;
     }
 
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T checkValue, T from, T to) {
+        return checkValue.compareTo(from) >= 0 && checkValue.compareTo(to) < 0;
+    }
+
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }

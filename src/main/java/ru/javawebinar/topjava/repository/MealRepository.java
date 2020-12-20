@@ -2,8 +2,7 @@ package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface MealRepository {
@@ -18,7 +17,7 @@ public interface MealRepository {
 
     Collection<Meal> getAll(int userId);
 
-    Collection<Meal> getAllByDateAndTimePeriods(
-            int userId, java.time.LocalDate startDate, LocalDate endDate, java.time.LocalTime startTime, LocalTime endTime);
+    Collection<Meal> getAllByDateTime(
+            int userId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }
