@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,6 +22,8 @@ public class InMemoryMealRepository implements MealRepository {
 
     {
         MealsUtil.meals.forEach(meal -> save(meal, SecurityUtil.authUserId()));
+        save(new Meal(LocalDateTime.of(2021, Month.JANUARY, 1, 15, 0), "Завтрак пользователя типа Админ", 2000), 2);
+        save(new Meal(LocalDateTime.of(2021, Month.JANUARY, 1, 17, 0), "Второй завтрак пользователя типа Админ", 1000), 2);
     }
 
     @Override
