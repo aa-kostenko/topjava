@@ -34,50 +34,21 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
-        String postAction = request.getParameter("postAction");
+        String id = request.getParameter("id");
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
 
-        switch (postAction == null ? "all" : postAction) {
-            case "createUpdate":
-                String id = request.getParameter("id");
-                Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                        LocalDateTime.parse(request.getParameter("dateTime")),
-                        request.getParameter("description"),
-                        Integer.parseInt(request.getParameter("calories")));
-
-                log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-                mealRestController.create(meal);
-                response.sendRedirect("meals");
-                break;
-            case "filter":
-                String startDateStr = request.getParameter("startDate");
-                LocalDate startDate = startDateStr != "" ? LocalDate.parse(startDateStr) : null;
-                String endDateStr = request.getParameter("endDate");
-                LocalDate endDate = endDateStr != "" ? LocalDate.parse(endDateStr) : null;
-                String startTimeStr = request.getParameter("startTime");
-                LocalTime startTime = startTimeStr != "" ? LocalTime.parse(startTimeStr, TIME_FORMATTER) : null;
-                String endTimeStr = request.getParameter("endTime");
-                LocalTime endTime = endTimeStr != "" ? LocalTime.parse(endTimeStr, TIME_FORMATTER) : null;
-
-                log.info("getAllByDateAndTime {}, {}, {}, {}", startDate, endDate, startTime, endTime);
-
-                request.setAttribute("startDate", startDateStr);
-                request.setAttribute("endDate", endDateStr);
-                request.setAttribute("startTime", startTimeStr);
-                request.setAttribute("endTime", endTimeStr);
-
-                request.setAttribute(
-                        "meals",
-                        mealRestController.getAllByDateAndTime(startDate, endDate, startTime, endTime));
-
-                request.getRequestDispatcher("/meals.jsp").forward(request, response);
-            case "all":
-            default:
-                log.info("getAll from doPost");
-                response.sendRedirect("meals");
-                break;
+        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+        if (meal.isNew()) {
+            mealRestController.create(meal);
+        } else {
+            mealRestController.update(meal, Integer.parseInt(id));
         }
+        response.sendRedirect("meals");
     }
 
     @Override
@@ -98,6 +69,29 @@ public class MealServlet extends HttpServlet {
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
+                break;
+            case "filter":
+                String startDateStr = request.getParameter("startDate");
+                LocalDate startDate = !startDateStr.isEmpty() ? LocalDate.parse(startDateStr) : null;
+                String endDateStr = request.getParameter("endDate");
+                LocalDate endDate = !endDateStr.isEmpty() ? LocalDate.parse(endDateStr) : null;
+                String startTimeStr = request.getParameter("startTime");
+                LocalTime startTime = !startTimeStr.isEmpty() ? LocalTime.parse(startTimeStr, TIME_FORMATTER) : null;
+                String endTimeStr = request.getParameter("endTime");
+                LocalTime endTime = !endTimeStr.isEmpty() ? LocalTime.parse(endTimeStr, TIME_FORMATTER) : null;
+
+                log.info("getAllByDateAndTime {}, {}, {}, {}", startDate, endDate, startTime, endTime);
+
+                request.setAttribute("startDate", startDateStr);
+                request.setAttribute("endDate", endDateStr);
+                request.setAttribute("startTime", startTimeStr);
+                request.setAttribute("endTime", endTimeStr);
+
+                request.setAttribute(
+                        "meals",
+                        mealRestController.getAllByDateAndTime(startDate, endDate, startTime, endTime));
+
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
             default:
