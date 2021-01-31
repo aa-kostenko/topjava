@@ -21,39 +21,35 @@ public class MealTestData {
     public static final int ADMIN_LUNCH_ID = START_SEQ + 7;
     public static final int ADMIN_DINNER_ID = START_SEQ + 8;
 
-    public static final List<Meal> userMeals = Arrays.asList(
-            new Meal(USER_BREAKFAST_ID,
-                    LocalDateTime.parse("2021-01-30 10:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. User. Завтрак",
-                    500),
-            new Meal(USER_LUNCH_ID,
-                    LocalDateTime.parse("2021-01-30 13:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. User. Обед",
-                    1000),
-            new Meal(USER_DINNER_ID,
-                    LocalDateTime.parse("2021-01-30 20:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. User. Ужин",
-                    500));
+    public static final Meal userBreakfast = new Meal(USER_BREAKFAST_ID,
+            LocalDateTime.parse("2021-01-30 10:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. User. Завтрак",
+            500);
+    public static final Meal userLunch = new Meal(USER_LUNCH_ID,
+            LocalDateTime.parse("2021-01-30 13:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. User. Обед",
+            1000);
+    public static final Meal userDinner = new Meal(USER_DINNER_ID,
+            LocalDateTime.parse("2021-01-30 20:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. User. Ужин",
+            500);
 
-    public static final Meal userBreakfast = userMeals.get(0);
-
-    public static final List<Meal> adminMeals = Arrays.asList(
-            new Meal(ADMIN_NIGHT_MEAL_ID,
-                    LocalDateTime.parse("2021-01-31 00:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. Admin. Еда на граничное значение",
-                    100),
-            new Meal(ADMIN_BREAKFAST_ID,
-                    LocalDateTime.parse("2021-01-31 10:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. Admin. Завтрак",
-                    1000),
-            new Meal(ADMIN_LUNCH_ID,
-                    LocalDateTime.parse("2021-01-31 13:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. Admin. Обед",
-                    500),
-            new Meal(ADMIN_DINNER_ID,
-                    LocalDateTime.parse("2021-01-31 20:00", DateTimeUtil.DATE_TIME_FORMATTER),
-                    "БД. Admin. Ужин",
-                    410));
+    public static final Meal adminNightMeal = new Meal(ADMIN_NIGHT_MEAL_ID,
+            LocalDateTime.parse("2021-01-31 00:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. Admin. Еда на граничное значение",
+            100);
+    public static final Meal adminBreakfast = new Meal(ADMIN_BREAKFAST_ID,
+            LocalDateTime.parse("2021-01-31 10:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. Admin. Завтрак",
+            1000);
+    public static final Meal adminLunch = new Meal(ADMIN_LUNCH_ID,
+            LocalDateTime.parse("2021-01-31 13:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. Admin. Обед",
+            500);
+    public static final Meal adminDinner = new Meal(ADMIN_DINNER_ID,
+            LocalDateTime.parse("2021-01-31 20:00", DateTimeUtil.DATE_TIME_FORMATTER),
+            "БД. Admin. Ужин",
+            410);
 
     public static Meal getNew() {
         return new Meal(
@@ -71,7 +67,7 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
