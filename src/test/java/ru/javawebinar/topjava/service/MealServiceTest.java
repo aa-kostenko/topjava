@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
-import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
@@ -102,11 +102,11 @@ public class MealServiceTest {
                 LocalDate.parse("2021-01-31", DateTimeUtil.DATE_FORMATTER),
                 USER_ID);
 
-        List<Meal> userMeals = new ArrayList<>();
-        userMeals.add(userBreakfast);
-        userMeals.add(userLunch);
-        userMeals.add(userDinner);
-        assertThat(meals.size()).isEqualTo(userMeals.size());
+        List<Meal> sortDescDateUserMeals = new ArrayList<>();
+        sortDescDateUserMeals.add(userDinner);
+        sortDescDateUserMeals.add(userLunch);
+        sortDescDateUserMeals.add(userBreakfast);
+        assertMatch(meals, sortDescDateUserMeals);
     }
 
     @Test
