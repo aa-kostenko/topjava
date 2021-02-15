@@ -1,7 +1,14 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,6 +21,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -28,8 +37,50 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
+
     @Autowired
     private MealService service;
+
+    private static List<String> execResList = new ArrayList<>();
+
+    @Rule
+    public final TestRule oneTestWatchman = new TestWatcher() {
+
+        private long startTime;
+
+        @Override
+        protected void starting(Description description) {
+            startTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void finished(Description description) {
+            long execTime = System.currentTimeMillis() - startTime;
+            String execRes = "TEST> METHOD = " +  description.getMethodName() + ", EXECUTE TIME(MS): " + execTime;
+            log.warn("TEST> METHOD = " +  description.getMethodName() + ", EXECUTE TIME(MS): " + execTime);
+            execResList.add(execRes);
+        }
+    };
+
+    @ClassRule
+    public static final TestRule allTestWatchman = new TestWatcher() {
+        private long startTime;
+
+        @Override
+        protected void starting(Description description) {
+            startTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void finished(Description description) {
+            long execTime = System.currentTimeMillis() - startTime;
+            log.warn("ALL TESTS EXEC TIME (MS): " + execTime);
+            for(String s : execResList){
+                log.warn(s);
+            }
+        }
+    };
 
     @Test
     public void delete() throws Exception {
