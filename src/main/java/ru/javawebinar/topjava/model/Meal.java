@@ -11,13 +11,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NamedQueries({
-        @NamedQuery(name = Meal.UPDATE,
-                query = " UPDATE Meal " +
-                        " SET description=:description, calories=:calories, dateTime=:date_time " +
-                        " WHERE id=:id AND user.id =:user_id "),
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id =:user_id"),
-        @NamedQuery(name = Meal.BETWEEN_INCLUSIVE, query = "SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.user.id =?1 AND m.dateTime >=?2 AND m.dateTime <?3 ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m JOIN FETCH m.user WHERE m.user.id =:user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BETWEEN_INCLUSIVE, query = "SELECT m FROM Meal m WHERE m.user.id =?1 AND m.dateTime >=?2 AND m.dateTime <?3 ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id =:user_id ORDER BY m.dateTime DESC"),
 })
 
 @Entity
@@ -25,7 +21,6 @@ import java.time.LocalTime;
         @UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
 
-    public static final String UPDATE = "Meal.update";
     public static final String DELETE = "Meal.delete";
     public static final String BETWEEN_INCLUSIVE = "Meal.getBetweenInclusive";
     public static final String ALL_SORTED = "Meal.getAllSorted";
@@ -36,16 +31,16 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false)
     @NotBlank
-    @Size(min = 5)
+    @Size(min = 4, max = 1000)
     private String description;
 
     @Column(name = "calories", nullable = false)
-    @NotNull
     @Range(min = 10, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
     public Meal() {

@@ -15,7 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -134,14 +133,12 @@ public class MealServiceTest {
     @Test
     public void update() throws Exception {
         Meal updated = getUpdated();
-        updated.setUser(UserTestData.user);
         service.update(updated, USER_ID);
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
     @Test
     public void updateNotOwn() throws Exception {
-        meal1.setUser(UserTestData.user);
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
     }
 
