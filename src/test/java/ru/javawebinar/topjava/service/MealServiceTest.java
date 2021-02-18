@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AssumptionViolatedException;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -36,50 +37,41 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger("");
+    private static String allTestMethResult = "";
+
+    private static void logInfo(Description description, String status, long nanos) {
+        String testName = description.isTest() ? description.getMethodName() : description.getClassName();
+        String currTestResult = String.format("Test %s %s, spent %d milliseconds",
+                testName, status, TimeUnit.NANOSECONDS.toMillis(nanos));
+        if (description.isTest()) {
+            allTestMethResult += currTestResult + "\n";
+        } else {
+            allTestMethResult = "\n" + currTestResult + "\n" + allTestMethResult;
+        }
+        logger.info(currTestResult);
+    }
+
+    @Rule
+    public Stopwatch oneMethodStopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            logInfo(description, "finished", nanos);
+        }
+    };
+
+
+    @ClassRule
+    public static Stopwatch entireTestStopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            logInfo(description, "finished", nanos);
+            logger.info(allTestMethResult);
+        }
+    };
 
     @Autowired
     private MealService service;
-
-    private static List<String> execResList = new ArrayList<>();
-
-    @Rule
-    public final TestRule oneTestWatchman = new TestWatcher() {
-
-        private long startTime;
-
-        @Override
-        protected void starting(Description description) {
-            startTime = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            long execTime = System.currentTimeMillis() - startTime;
-            String execRes = "TEST> METHOD = " +  description.getMethodName() + ", EXECUTE TIME(MS): " + execTime;
-            log.warn("TEST> METHOD = " +  description.getMethodName() + ", EXECUTE TIME(MS): " + execTime);
-            execResList.add(execRes);
-        }
-    };
-
-    @ClassRule
-    public static final TestRule allTestWatchman = new TestWatcher() {
-        private long startTime;
-
-        @Override
-        protected void starting(Description description) {
-            startTime = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            long execTime = System.currentTimeMillis() - startTime;
-            log.warn("ALL TESTS EXEC TIME (MS): " + execTime);
-            for(String s : execResList){
-                log.warn(s);
-            }
-        }
-    };
 
     @Test
     public void delete() throws Exception {
