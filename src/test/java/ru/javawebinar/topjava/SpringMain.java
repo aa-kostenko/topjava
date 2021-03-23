@@ -14,8 +14,6 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
-import static ru.javawebinar.topjava.Profiles.DATAJPA;
-
 public class SpringMain {
     public static void main(String[] args) {
         //System.setProperty("spring.profiles.active", "postgres,data-jpa");
@@ -23,7 +21,7 @@ public class SpringMain {
         //try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml")) {
         try (GenericXmlApplicationContext appCtx = new GenericXmlApplicationContext()) {
             ConfigurableEnvironment env = appCtx.getEnvironment();
-            env.setActiveProfiles(Profiles.getActiveDbProfile(), DATAJPA);
+            env.setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.REPOSITORY_IMPLEMENTATION);
             appCtx.load("spring/spring-app.xml", "spring/spring-db.xml");
             appCtx.refresh();
 
