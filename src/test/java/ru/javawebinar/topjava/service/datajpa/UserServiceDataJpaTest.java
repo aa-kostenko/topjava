@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.AbstractUserServiceTest;
+import ru.javawebinar.topjava.service.UserService;
 
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ActiveProfiles("data-jpa")
-public class UserServiceDataJpaTest extends AbstractUserServiceTest{
+public class UserServiceDataJpaTest extends AbstractUserServiceTest {
     @Autowired
     private UserService service;
 
