@@ -7,13 +7,16 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
+import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
+
 @Repository
-@Profile("postgres")
-public class PostgresJdbcMealRepository extends JdbcMealRepository{
+@Profile(POSTGRES_DB)
+public class PostgresJdbcMealRepository extends JdbcMealRepository<LocalDateTime>{
     public PostgresJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
+    @Override
     protected LocalDateTime convertLocalDateTime(LocalDateTime dateTime) {
         return dateTime;
     }
