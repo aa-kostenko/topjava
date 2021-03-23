@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import ru.javawebinar.topjava.model.Role;
@@ -16,6 +14,8 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
+
 public class SpringMain {
     public static void main(String[] args) {
         //System.setProperty("spring.profiles.active", "postgres,data-jpa");
@@ -23,7 +23,7 @@ public class SpringMain {
         //try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml")) {
         try (GenericXmlApplicationContext appCtx = new GenericXmlApplicationContext()) {
             ConfigurableEnvironment env = appCtx.getEnvironment();
-            env.setActiveProfiles("postgres", "data-jpa");
+            env.setActiveProfiles(Profiles.getActiveDbProfile(), DATAJPA);
             appCtx.load("spring/spring-app.xml", "spring/spring-db.xml");
             appCtx.refresh();
 

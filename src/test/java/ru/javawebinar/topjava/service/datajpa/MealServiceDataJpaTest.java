@@ -11,9 +11,10 @@ import ru.javawebinar.topjava.service.AbstractMealServiceTest;
 import ru.javawebinar.topjava.service.MealService;
 
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 
-@ActiveProfiles("data-jpa")
+@ActiveProfiles(DATAJPA)
 public class MealServiceDataJpaTest extends AbstractMealServiceTest {
     @Autowired
     protected MealService service;

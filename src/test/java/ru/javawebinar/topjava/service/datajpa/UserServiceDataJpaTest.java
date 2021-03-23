@@ -8,10 +8,11 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.service.UserService;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ActiveProfiles("data-jpa")
+@ActiveProfiles(DATAJPA)
 public class UserServiceDataJpaTest extends AbstractUserServiceTest {
     @Autowired
     private UserService service;
