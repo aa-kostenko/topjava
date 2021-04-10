@@ -21,6 +21,12 @@ function add() {
     $("#editRow").modal();
 }
 
+function deleteRowWithConfirm(id) {
+    if (confirm('Are you sure?')) {
+        deleteRow(id);
+    }
+}
+
 function deleteRow(id) {
     $.ajax({
         url: ctx.ajaxUrl + id,
