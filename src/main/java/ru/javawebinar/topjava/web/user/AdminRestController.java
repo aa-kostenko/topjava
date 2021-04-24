@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import ru.javawebinar.topjava.model.User;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,12 +32,17 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@Valid  @RequestBody User user) {
-        User created = super.create(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
+        try {
+            User created = super.create(user);
+            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(REST_URL + "/{id}")
+                    .buildAndExpand(created.getId()).toUri();
+            return ResponseEntity.created(uriOfNewResource).body(created);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+        }
     }
 
     @Override
@@ -49,7 +56,13 @@ public class AdminRestController extends AbstractUserController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody User user, @PathVariable int id) {
-        super.update(user, id);
+        try {
+            super.update(user, id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+        }
+
     }
 
     @Override

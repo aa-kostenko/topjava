@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import ru.javawebinar.topjava.to.UserTo;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Locale;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
@@ -32,16 +36,26 @@ public class ProfileRestController extends AbstractUserController {
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
-        User created = super.create(userTo);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL).build().toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        try {
+            User created = super.create(userTo);
+            URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(REST_URL).build().toUri();
+            return ResponseEntity.created(uriOfNewResource).body(created);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+        }
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody UserTo userTo) {
-        super.update(userTo, authUserId());
+        try {
+            super.update(userTo, authUserId());
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+        }
     }
 
     @GetMapping("/text")

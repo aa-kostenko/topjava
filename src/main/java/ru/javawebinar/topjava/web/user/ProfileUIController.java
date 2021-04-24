@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -11,6 +14,7 @@ import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.validation.Valid;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/profile")
@@ -26,11 +30,18 @@ public class ProfileUIController extends AbstractUserController {
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo, SecurityUtil.authUserId());
-            SecurityUtil.get().update(userTo);
-            status.setComplete();
-            return "redirect:/meals";
+            try {
+                super.update(userTo, SecurityUtil.authUserId());
+                SecurityUtil.get().update(userTo);
+                status.setComplete();
+                return "redirect:/meals";
+            } catch (DataIntegrityViolationException e) {
+                throw new DataIntegrityViolationException(
+                        messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+            }
+
         }
+
     }
 
     @GetMapping("/register")
@@ -46,7 +57,12 @@ public class ProfileUIController extends AbstractUserController {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(userTo);
+            try {
+                super.create(userTo);
+            } catch (DataIntegrityViolationException e) {
+                throw new DataIntegrityViolationException(
+                        messageSource.getMessage("user.email_exists", null, Locale.getDefault()));
+            }
             status.setComplete();
             return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
         }
